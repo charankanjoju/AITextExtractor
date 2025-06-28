@@ -15,6 +15,8 @@ A modern, web-based application built with **Streamlit** that extracts text from
 ---
 
 ## 🖼️ Demo
+![image](https://github.com/user-attachments/assets/fdad156c-0358-4aaa-aef5-78aca97e6d58)
+![image](https://github.com/user-attachments/assets/874cc4b1-a55c-4093-a82d-2ee72cb606ad)
 
 <!-- Optional: Add a GIF or screenshot of the UI -->
 ![AI Text Extractor Demo](demo.gif)
