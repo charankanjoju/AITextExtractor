@@ -170,7 +170,8 @@ if 'reader' not in st.session_state:
 
 def extract_text_traditional(image):
     try:
-        text = pytesseract.image_to_string(image)
+        preprocessed = preprocess_image_opencv(image)
+        text = pytesseract.image_to_string(preprocessed)
         return text if text.strip() else "No text detected"
     except Exception as e:
         st.error(f"Error in traditional OCR: {str(e)}")
@@ -181,17 +182,29 @@ def extract_text_deep_learning(image):
         if st.session_state.reader is None:
             with st.spinner("🤖 Initializing AI model..."):
                 st.session_state.reader = easyocr.Reader(['en'])
-        
-        image_np = np.array(image)
+
+        preprocessed = preprocess_image_opencv(image)
+
         with st.spinner("🔍 Analyzing image with AI..."):
-            results = st.session_state.reader.readtext(image_np)
-        
+            results = st.session_state.reader.readtext(preprocessed)
+
         text = ' '.join([result[1] for result in results])
         return text if text.strip() else "No text detected"
     except Exception as e:
         st.error(f"Error in AI OCR: {str(e)}")
         return "Error occurred during text extraction. Please try again or use traditional OCR."
 
+def preprocess_image_opencv(image):
+    try:
+        image_np = np.array(image)
+        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+        blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        return thresh
+    except Exception as e:
+        st.error(f"Error during preprocessing: {str(e)}")
+        return np.array(image)
+        
 # Main UI
 st.markdown('<div class="title-container"><h1 class="title">AI Text Extractor</h1><p class="subtitle">Transform your images into text with advanced AI technology</p></div>', unsafe_allow_html=True)
 
